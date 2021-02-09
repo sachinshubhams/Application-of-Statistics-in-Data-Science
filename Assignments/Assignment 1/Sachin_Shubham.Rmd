@@ -1,0 +1,24 @@
+---
+title: "Sachin_Shubham"
+author: "Sachin Shubham - 1524147"
+date: "1/29/2021"
+output: pdf_document
+---
+
+
+```{r}
+library(ggplot2)
+e <- ggplot(mpg, aes(class, hwy))
+
+customTitle <- expression(paste("Vehicle type, ", italic("n"), " = 234"))
+
+e + ggtitle("Vehicle type vs Highway miles per gallon") +
+    labs(x=customTitle) + labs(y="Highway miles per gallon") +
+    geom_jitter(aes(color=class)) + geom_boxplot()
+knitr::opts_chunk$set(echo = TRUE)   
+```
+
+
+
+
+

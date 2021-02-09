@@ -1,0 +1,79 @@
+---
+title: "Birthwt"
+author: "Sachin Shubham - 1524147"
+date: "2/6/2021"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+
+birthwt <- as_tibble(MASS::birthwt)
+colnames(birthwt) <- c("birthwt.below.2500", 
+                       "mother.age",
+                       "mother.weight",
+                       "race",
+                       "mother.smokes",
+                       "previous.prem.labor",
+                       "hypertension",
+                       "uterine.irr",
+                       "physician.visits",
+                       "birthwt.grams")
+
+#(1) compare infants birth weight between smoking and non-smoking mothers
+
+birthwt <- birthwt %>%
+  mutate_at(c("mother.smokes", "birthwt.below.2500"),
+            ~ recode_factor(.x, `0` = "no", `1` = "yes"))
+
+qplot(x = mother.smokes, y = birthwt.grams,
+      geom = "boxplot", data = birthwt,
+      xlab = paste("Mother Smoke, n = ", nrow(birthwt)), 
+      ylab = "Birthweight (grams)",
+      fill = I("lightblue"))
+birthwt %>%
+  group_by(mother.smokes) %>%
+  summarize(num.obs = n(),
+            mean.birthwt = round(mean(birthwt.grams), 0),
+            sd.birthwt = round(sd(birthwt.grams), 0),
+            se.birthwt = round(sd(birthwt.grams) / sqrt(num.obs), 0))
+birthwt.t.test <- t.test(birthwt.grams ~ mother.smokes, data = birthwt)
+birthwt.t.test
+
+birthwt.t.test$p.value 
+
+#Our study finds that birth weights are on average 3055.696 in the non-smoking
+#group compared to the average 2771.919 in smoking group (t-statistic 2.7299,
+#p=0.007003, 95% CI [78.57486, 488.97860]g). A small p(<=0.05), reject the null
+#hypothesis. Therefore, this is strong evidence that the null hypothesis is
+#invalid
+
+#(2)compare infants birth weight between a group of mothers with a presence of
+#uterine irritability and a group of mothers without it
+
+birthwt <- birthwt %>%
+  mutate_at(c("uterine.irr", "birthwt.below.2500"),
+            ~ recode_factor(.x, `0` = "without uterine", `1` = "with uterine"))
+qplot(x = uterine.irr, y = birthwt.grams,
+      geom = "boxplot", data = birthwt,
+      xlab = paste("Uterine, n = ", nrow(birthwt)), 
+      ylab = "Birthweight (grams)",
+      fill = I("lightblue"))
+birthwt %>%  
+  group_by(uterine.irr) %>%
+  summarize(num.obs = n(),
+            mean.birthwt = round(mean(birthwt.grams), 0),
+            sd.birthwt = round(sd(birthwt.grams), 0),
+            se.birthwt = round(sd(birthwt.grams) / sqrt(num.obs), 0))
+birthwt.t.test <- t.test(birthwt.grams ~ uterine.irr, data = birthwt)
+birthwt.t.test
+
+birthwt.t.test$p.value 
+
+#Our study finds that birth weights are on average 3030.702 in the without
+#uterine group compared to the average 2449.429 in with uterine group
+#(t-statistic 3.8615, p=0.000455, 95% CI [275.8913, 886.6553]g). A small
+#p(<=0.05), reject the null hypothesis. Therefore, this is strong evidence that
+#the null hypothesis is invalid
+
+```
