@@ -1,0 +1,38 @@
+---
+title: "COSC6323 - Exercise 3"
+author: "Sachin Shubham"
+date: "2/13/2021"
+output: pdf_document
+---
+
+```{r}
+# Task 1
+# Suppose a coin toss turns up 13 heads out of 20 trials. At .05 significance
+# level, can one reject the null hypothesis that the coin toss is fair?
+
+prop.test(13, 20, p=0.5, correct=FALSE)
+
+# Our study finds that the  chi-square=1.8,
+# p=0.1797, 95% CI [0.4328543, 0.8188082]. A greater p(0.1797>0.05), fail to 
+# reject the null hypothesis. Therefore, At .05 significance level, we fail to  
+# reject the null hypothesis that the coin toss is fair. This is strong evidence 
+# that the null hypothesis is valid
+
+# Task 2
+# An outbreak of Salmonella-related illness was attributed to ice cream produced
+# at a certain factory. Scientists measured the level of Salmonella in 9 randomly
+# sampled batches of ice cream. The levels (in MPN/g) are : 0.593, 0.142, 0.329,
+# 0.691, 0.231, 0.793, 0.519, 0.392, 0.418.
+# Is there evidence that the mean level of Salmonella in the ice cream is greater
+# than 0.3 MPN/g?
+
+x = c(0.593, 0.142, 0.329, 0.691, 0.231, 0.793, 0.519, 0.392, 0.418)
+t.test(x, alternative="greater", mu=0.3)
+
+
+# Our study finds that the  t = 2.2051, df = 8, mean is 0.4564444, 
+# p=0.02927, 95% CI [0.3245133, Inf]. A greater p(0.02927>0.3), fail to reject 
+# the null hypothesis. Therefore, At 0.3 significance level, we fail to reject  
+# the null hypothesis. Therefore, we have slight strong evidence that the mean 
+# Salmonella level in the ice cream is above 0.3 MPN/g
+```
