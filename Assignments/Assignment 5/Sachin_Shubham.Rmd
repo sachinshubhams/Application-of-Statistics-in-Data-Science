@@ -1,0 +1,41 @@
+---
+title: "COSC6323 - Exercise 5"
+author: "Sachin Shubham"
+date: "3/5/2021"
+output: word_document
+---
+1 Task 1
+A study was done to compare soil mapping units on the basis of their lateral
+variability’s for a single property, silt content. The study area consisted of a
+sequence of eight contiguous sites extending over the crest and flank of a low rise
+in a valley plain underlain by marl near Albudeite in the province of Murcia,
+Spain. The geomorphological sites were the primary mapping units adopted and
+were small areas of ground surface of uniform shape. Following the delimination
+of the sites, soil samples were obtained in each site at 11 random points within a
+10mx10m area centered on the midpoint of the site. All samples were taken from
+the same depth. The soil property considered was the silt content, expressed
+as percentages of the total silt, clay and, sand content. The data are given in
+SiltDataset.csv
+```{r}
+setwd('D:/Statistical Methods/Assignments/Assignment 5')
+siltData <- read.csv("SiltDataset.csv")
+#Factor
+siteFactor <- factor(siltData$site)
+#ANOVA
+analysis <- aov(siltData$silt ~ siteFactor)
+#Summary
+summary(analysis)
+#Boxplot
+customTitle <- expression(paste("Site, ", italic("n"), " = 8"))
+bPlot<-boxplot(siltData$silt~siteFactor,xlab=customTitle,
+        ylab="Silt",
+        border = par("fg"), col = "bisque", log = "",
+        main="Boxplots of Site vs Silt")
+means <- tapply(siltData$silt, siteFactor, mean)
+points( means, pch=8, col="blue")
+
+```
+Since the p-value (0.00293 < 0.05) is less than 0.05, the difference in means is statistically significant.
+Therefore, there is difference in silt content among the soils from different sites.
+
+

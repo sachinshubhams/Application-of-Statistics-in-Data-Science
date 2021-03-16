@@ -1,0 +1,75 @@
+---
+title: "COSC6323 - Exercise 6"
+author: "Sachin Shubham"
+date: "3/13/2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+1 Task
+One aspect of wildlife science is the study of how various habits of wildlife are
+affected by environmental conditions. In this exercise, we are concerned about
+the effect of air temperature on the time that the ”lesser snow geese” leave their
+overnight roost sites to fly to their feeding areas. The data is given in Geese.txt.
+1. Obtain the necessary plots.
+2. Compute the LM coefficients for the ’time vs temp’ model (β0 , β1).
+3. Obtain the regression equation.
+4. Obtain the confidence intervals for β1.
+5. Is there correlation between the temperature and time in the Geese data set?
+
+Solution:
+```{r}
+filepath = 'C:\\Users\\sachi\\Downloads\\Geese.txt'
+
+
+geese <- read.table(filepath,          # TXT data file indicated as string or full path to the file
+                    header = TRUE,    # Whether to display the header (TRUE) or not (FALSE)
+                    sep = "",          # Separator of the columns of the file
+                    dec = ".")         # Character used to separate decimals of the numbers in the file
+
+# PREDICTOR (temprature)
+temp<-geese$temp
+
+# RESPONCE (time)
+time<-geese$time
+
+# Apply the lm() function.
+model = lm(temp ~ time, data = data.frame(geese) )
+
+#1 Plot
+# Plot the chart.
+plot(time,temp,col = "blue",main = "Effect of Air Temperature on Lesser Snow Geese Leaving Roost",
+     abline(lm(temp~time)), cex = 1.3, pch = 16,
+     xlab = "Air Temperature",
+     ylab = "Lesser Snow Geese Response Time")
+par(mfrow = c(2, 2))
+plot(model)
+
+
+#2  LM coefficients for the ’time vs temp’ model (β0 , β1)
+coefs = coefficients(model)
+coefs
+
+#3 The regression equation
+lm(temp ~ time, data = data.frame(geese))
+
+
+#4 Confidence intervals for β1
+confint(model, 'time', level=0.95)
+
+#5 Is there correlation between the temperature and time in the Geese data set?
+correlation_coeff<-cor(time,temp)
+correlation_coeff
+print(summary(model))
+
+
+```
+Our study shows that Multiple R-squared is approx 60%(0.592) and p-value is 1.653e-08.
+
+The 0.7694334 Correlation Coefficient indicate a strong positive linear relationship.
+
+The fitted β1 is 0.35226 with an interval of (0.2534182, 0.4511043).
+
+As p-value(1.653e-08) is less than 0.05, therefore relationship between time and 
+temperature is statistically significant.It indicates strong evidence against the null hypothesis, as there is less than a 5% probability the null is correct. Therefore, we reject the null hypothesis, and accept the alternative hypothesis.
