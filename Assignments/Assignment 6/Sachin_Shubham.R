@@ -45,14 +45,8 @@ plot(model,1)
 model
 
 
-coefs = coefficients(model)
 
-
-
-
-B0 <- model[[1]][1]
-B1 <- model[[1]][2]
-coefficients(model)
+lm(formula = time ~ temp, data = geese)
 
 x = rnorm(1000, mean = mean(temp), sd = sd(temp))
 

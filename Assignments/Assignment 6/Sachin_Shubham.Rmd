@@ -48,8 +48,7 @@ plot(model)
 
 
 #2  LM coefficients for the ’time vs temp’ model (β0 , β1)
-coefs = coefficients(model)
-coefs
+lm(formula = time ~ temp, data = geese)
 
 #3 The regression equation
 lm(temp ~ time, data = data.frame(geese))
