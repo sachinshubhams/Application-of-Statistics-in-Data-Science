@@ -26,8 +26,7 @@ analysis <- aov(siltData$silt ~ siteFactor)
 #Summary
 summary(analysis)
 #Boxplot
-customTitle <- expression(paste("Site, ", italic("n"), " = 8"))
-bPlot<-boxplot(siltData$silt~siteFactor,xlab=customTitle,
+bPlot<-boxplot(siltData$silt~siteFactor,xlab="Site",
         ylab="Silt",
         border = par("fg"), col = "bisque", log = "",
         main="Boxplots of Site vs Silt")
