@@ -1,0 +1,85 @@
+---
+title: "COSC6323 - Exercise 7"
+author: "Sachin Shubham"
+date: "3/27/2021"
+output: word_document
+---
+1 Task
+We are running a small sales company and we want to estimate the marketing budget for the next year. Use marketing data set which contains the impact of the amount of money spent on three advertising medias (YouTube,
+Facebook and newspaper) on sales. Install datarium package using devtools ::
+install github(”kassmbara/datarium”) then load and inspect the marketing
+data. Build a model for estimating sales based on the advertising budget invested in youtube, facebook and newspaper. Use the following outline for your
+report:
+0. Build a multiple linear regression model.
+1. Create the necessary plots.
+2. Examine the F-statistic and the associated p-value, interpret it.
+3. Examine which predictor variables are significant.
+4. Obtain the regression equation.
+5. What are your recommendations for the budget planning based on the reviewed data?
+
+```{r}
+data("marketing", package = "datarium")
+input <- marketing[,c("youtube","facebook","newspaper","sales")]
+print(head(input))
+library(GGally)
+```
+#0. Build a multiple linear regression model
+```{r}
+model <- lm(sales ~ youtube + facebook + newspaper, data = input)
+summary(model)
+AIC(model)
+BIC(model)
+```
+#1. Create the necessary plots.
+```{r}
+# Matrix scatterplot:
+plot(input, pch=16, col="blue",
+     main="Matrix Scatterplot of Yt, Fb, Np & Sales")
+
+ggpairs(marketing,aes(alpha=0.4))
+# Diagnostic plots for the model
+par(mfrow=c(2, 2))
+plot(model)
+
+model2 <- lm(sales~ youtube + facebook, data = input)
+summary(model2)
+
+ggPredict(model2,se=TRUE,interactive=TRUE)
+
+```
+
+#2. Examine the F-statistic and the associated p-value, interpret it.
+
+As per our study F-statistic: 570.3 on 3 and 196 DF, p-value: < 2.2e-16, i.e. very less than 0.05 and extremely significant.
+
+
+
+#3. Examine which predictor variables are significant.
+```{r}
+anova(model)
+```
+
+The facebook and youtube ads will increase the sales with extremely significant p-values, where as the newspaper ads appears that it will not increase the sales and has a very high p-value of 0.86 meaning we can keep the null hypothesis that newspaper ads don't contribute to sales.High sum squares  for youtube and facebook ads while very low sum squares for newspaper ads. To conclude the newspapers ads don't contribute to sales.
+
+#4. Obtain the regression equation.
+```{r}
+Interc <- coef(model)[1]
+Xyoutube <- coef(model)[2]
+Xfacebook <- coef(model)[3]
+Xnewspaper  <- coef(model)[4]
+
+x1 = median(input$youtube)
+x2 = median(input$facebook)
+x3 = median(input$newspaper)
+
+Y = Interc + Xyoutube*x1 + Xfacebook*x2 + Xnewspaper*x3
+
+```
+
+#5. What are your recommendations for the budget planning based on the reviewed data?
+```{r}
+
+ggcorr(marketing, palette = "RdBu", label = TRUE)
+```
+
+Measuring correlation of predictor variables, it is found that Youtube ads contribute most to increased sales followed by facebook ads. Newspaper ads do not appear to have a relationship with increased sales so it is recommended to budget just for facebook and youtube ads only.
