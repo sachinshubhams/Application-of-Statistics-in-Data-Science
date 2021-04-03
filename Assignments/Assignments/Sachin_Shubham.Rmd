@@ -1,0 +1,219 @@
+---
+title: "COSC6323 - Homework 3"
+author: "Sachin Shubham"
+date: "4/1/2021"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+Task 1
+
+A manufacturer of air conditioning ducts is concerned about the tensile strength
+of the sheet metal among the many supplies of this material. Four samples of
+sheet metal from four randomly chosen supplies are tested for tensile strength.
+The data are given.
+
+(a) Perform the appropriate analysis to ascertain whether there is excessive
+variation among suppliers.
+(b) Estimate the appropriate variance components.
+
+Solution:
+```{r}
+library(lme4)
+library(lattice)
+library(nlme)
+
+supplier<-c("supplier1","supplier1","supplier1","supplier1","supplier2","supplier2",
+           "supplier2","supplier2","supplier3","supplier3","supplier3","supplier3",
+           "supplier4","supplier4","supplier4","supplier4")
+
+strength<-c(19,21,19,29,80,71,63,56,47,26,25,35,90,49,83,78)
+
+df_task1<-data.frame(supplier,strength)
+df_task1
+supplier_factor<-as.factor(df_task1$supplier)
+boxplot(split(df_task1$strength,supplier_factor))
+points(df_task1)
+#(a)
+aov1 <- lm(strength ~ supplier,data=df_task1)
+anova(aov1)
+summary(aov1)
+par(mfrow=c(2, 2))
+plot(aov1)
+#(b)
+lme2 <- lmer(strength ~ 1 + (1|supplier),data=df_task1)
+summary(lme2)
+```
+(a) Our study find that the F-statistic is 19.04 and supplier1, supplier2 and supplier4 looks very significant with p-value is quite less than 0.05
+(b) The estimated variance components are 629.9 and 139.6 
+
+Task 2 
+
+A local bank has three branch offices. The bank has a liberal sick leave policy,
+and a vice-president was concerned about employees taking advantage of this
+policy. She thought that the tendency to take advantage depended on the branch
+at which the employee took for sick leave, she asked each branch manager to
+sample employees randomly and record the number of days of sick leave during
+2008. Ten employees were chosen, and the data are listed
+
+(a) Do the data indicate a difference in branches? Use a level of significance of
+0.05.
+(b) Use Duncan’s multi-range test to determine which branches differ. Explain
+your results with a summary plot
+
+Solution: 
+```{r}
+library(PMCMRplus)
+leaves<-c(15,20,19,14,11,15,11,18,19,23)
+branch<-c("branch1","branch1","branch1","branch1","branch2","branch2","branch2","branch3","branch3","branch3")
+df_task2<-data.frame(branch,leaves)
+df_task2
+branch <- as.factor(df_task2$branch)
+#Model
+fit<-aov(df_task2$leaves~branch)
+#Anova
+anova(fit)
+#Duncan Test
+res <- duncanTest(fit)
+#Plot
+plot(res)
+boxplot((df_task2$leaves~branch))
+summary(res)
+summaryGroup(res)
+```
+(a) Our study find that F = 6.2056, p=-value = 0.02816 (<0.05).
+    Yes the data indicates a significant difference of branches.
+(b) As per Duncan’s multi-range test branch3 - branch2 looks significantly different (p value = 0.0099), on other hand branch2 - branch1 and branch3 - branch1 with p value 0.0619793 and 0.1967854 respectively, are not significant.
+
+Task 3
+
+Brunye et al. (2008) examined the accuracy with which people could understand
+spatial representations from descriptions that were presented either in surveyperspective form or in route-perspective form. They used regression to examine
+whether the time spent reading the description (in seconds) would predict the
+response time (in milliseconds) to questions about the description. They state:
+There was strong evidence that increases in route description reading times predicted... response times [β = -.03, t(18) = -2.11, p < .05 ]
+Note that the degrees of freedom for the t test statistic are shown within parentheses.
+(a) What is the implication of the negative slope?
+(b) Give a 95% confidence interval for the expected change in response time, if
+reading time increases by 20 seconds.
+(c) Calculate r^2. Is reading time an accurate predictor of individual response
+times?
+
+Solution:
+
+(a) More time spent reading description led to lower response time to questions
+Less time spent reading description led to longer response time to questions.
+
+(b) Since, the t-statistic is the ratio of the departure of the estimated value of a parameter from its hypothesized value to its standard error.
+
+SE = Beta/t-stat
+
+SE = -0.03/-2.11
+
+therefore standard error is =0.0142
+
+20 * (-0.03 ± 2.11 * 0.0142)= -1.196 to -0.034
+
+Therefore, With 95% confidence, if reading time increases by 20 seconds, the mean response time will be decrease between 0.034 ms and 1.196 ms
+
+(c) As, t^2=F
+```{r}
+F = (-2.11)^2
+df = 20-2
+r2 = F/(df+F)
+r2
+```
+No, reading time only accounts for 19.82% of the variability in the individual response time
+
+
+Task 4
+
+The data in Table 3 represent the result of a test for the strength of an asphalt
+concrete mix. The test consisted of applying a compressive force on the top
+of different sample specimens. Two responses occurred: the stress and strain
+at which a sample specimen failed. The factors relate to mixture proportions,
+rates of speed at which the force was applied, and ambient temperature. Higher
+values of the response variables indicate stronger materials.
+The variables are:
+X1: percent binder (the amount of asphalt in the mixture)
+X2: loading rate (the speed at which the force was applied)
+X3: ambient temperature
+Y1: the stress at which the sample specimen failed
+Y2: the strain at which the specimen failed.
+Perform separate regressions to relate stress and strain to the factors of the
+experiment. Check the residuals for possible specification errors. Interpret all
+results.
+
+Solution:
+```{r}
+
+x1 = c(5.3, 5.3, 5.3, 6.0, 7.8, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+       10.0, 12.0, 12.0, 12.0, 12.0, 14.0)
+x2 = c(0.02, 0.02, 0.02, 2.00, 0.20, 2.00, 2.00, 2.00, 2.00, 0.02, 0.02, 0.02, 0.02, 2.00, 0.02, 0.02, 0.02, 0.02, 0.02)
+x3 = c(77, 32, 0, 77, 77, 104, 77, 32, 0, 104, 77, 32, 0, 77, 77, 32, 0, 104, 77)
+Y1 = c(42, 481, 543, 609, 444, 194, 593, 977, 872, 35, 96, 663, 702, 518, 40, 627, 683, 22, 35)
+Y2 = c(3.20, 0.73, 0.16, 1.44, 3.68, 3.11, 3.07, 0.19, 0.00, 5.86, 5.97, 0.29, 0.04, 2.72, 7.35, 1.17, 0.14, 15.00, 11.80)
+
+df_task4 <- data.frame(Y1, Y2, x1, x2, x3)
+df_task4
+#Model for Y1
+model1=lm(Y1~x1+x2+x3, data=df_task4)
+summary(model1)
+#Plot for Y1
+par(mfrow=c(2, 2))
+plot(model1)
+#Model for Y2
+model2=lm(Y2~x1+x2+x3, data=df_task4)
+summary(model2)
+#Plot for Y2
+par(mfrow=c(2, 2))
+plot(model2)
+#Residuals for Model1 and Model2
+res1 = resid(model1)
+res2 = resid(model2)
+plot(fitted(model1), res1)
+abline(0,0)
+plot(fitted(model2), res2)
+abline(0,0)
+```
+
+As per our study p-value: 6.447e-05(<<0.05),Multiple R-squared: 0.7601,	Adjusted F-statistic: 15.84. and as per residual plot, we can conclude that it's
+multiplicative model i.e. at least one of the variables are significant in changing the outcomes of the maximum stress and strain of the material.
+
+Task 5
+
+Martinussen et al. (2007) studied burnout among Norwegian policemen. In a
+sample of n = 220, they regressed y = frequency of psychosomatic complaints
+on demographic variables gender (0 = man, 1 = woman) and age (m = 2). This
+regression has R2 = 0.05. They then added independent variables exhaustion
+burnout score, cynicism burnout score, and professional efficacy burnout score
+(m = 5). The regression had R2 = 0.34. Given that TSS = 33.7, is there significant evidence that at least one of the burnout scores is related to psychosomatic
+complaints, after controlling for gender and age? Use α = 0.05.
+
+Solution:
+
+```{r}
+# For all model and variables
+n = 220
+m_full=5
+r2_full = 0.34
+TSS = 33.7
+SSR_full = r2_full*TSS
+SSR_full
+MSE_full = 22.242/(n-m_full-1)
+MSE_full
+#For the Age and gender variables only, 
+r2_rest = 0.05
+m_rest = 2
+TSS = 33.7
+SSR = r2_rest*TSS
+SSR
+SSE = 33.7 - 1.685 
+SSE
+
+F_dist_calc = ((r2_full - r2_rest)/(1-r2_full)) * (n-m_full-1)/(m_full-m_rest)
+
+F_dist_calc
+```
+As F_dist_calc > F(3,214) (31.34343 > 2.63), therefore there is a significant evidence that at least one of the burnout scores is related to psychosomatic complaints.
