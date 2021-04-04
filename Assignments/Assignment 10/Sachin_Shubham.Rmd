@@ -1,0 +1,117 @@
+---
+title: "COSC6323 - Exercise 8"
+author: "Sachin Shubham"
+date: "4/3/2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+1 Task
+
+You got a new assignment in the RD department. You need to build a model
+to predict the voice pitch based on the collected data. Upload the data file
+politeness data.csv.The difference in politeness level is represented in the column called “attitude”. In that column, “pol” stands for polite and “inf” for informal. Sex is represented as “F” and “M” in the column “gender”. The dependent measure is “frequency”, which is the voice pitch measured in Hertz (Hz). To remind you,higher values mean higher pitch.
+
+0. Explore the data set. Produce a box plot representing the relationship
+between politeness and pitch (frequency attitude*gender). Comment about
+observed picture.
+
+Build following models to predict the frequency:
+
+1. Model that used the fixed effect “attitude” (polite vs. informal) to predict
+voice pitch, controlling for by-subject and by-item variability.
+
+2. Model that used the fixed effect “gender” (male vs. female) to predict voice
+pitch, controlling for by-subject and by-item variability.
+
+3. Model that used the both “gender” and ”attitude” as fixed effect to predict
+voice pitch, controlling for by-subject and by-item variability.
+
+4. Comment on the summary of the models. Which model should be used for
+the most accurate prediction?
+
+Solution:
+
+```{r}
+library(lme4) 
+library(arm)  
+library(Matrix)
+
+politeness_data<-read.csv(file.choose())
+
+
+#0
+
+boxplot(frequency ~ attitude*gender, data=politeness_data, 
+        col=c("#ef8a62","#67a9cf"),
+        main="Relationship between Gender politeness and pitch",
+        xlab="Gender Voice Pitch", ylab="Frequency")
+
+```
+
+As per result from Boxplot
+
+(1) The	median	is	lower	 for	 the	 polite	 than	 for	 the	
+informal	attitude
+
+(2) There	is	more	overlap	between	the	informal and polite attitude	for
+    the males	than	for	the females.
+ 
+```{r}    
+#1
+
+lmer_attitude = lmer(frequency ~ attitude  + (1|subject) + (1|scenario), data=politeness_data)
+display(lmer_attitude)
+
+```
+
+```{r}
+#2
+
+lmer_gender <- lmer(frequency ~ gender + (1|subject) + (1|scenario), data=politeness_data)
+display(lmer_gender)
+
+```
+
+```{r}
+#3
+
+lmer_attitude_gender <- lmer(frequency ~ gender + attitude + (1|subject) + (1|scenario), data=politeness_data)
+display(lmer_attitude_gender)
+
+```
+
+```{r}
+#4
+
+AIC(lmer_attitude, lmer_gender, lmer_attitude_gender)
+BIC(lmer_attitude, lmer_gender, lmer_attitude_gender)
+
+```
+
+As we know that the smaller the AIC or BIC, the better the fit.
+
+comparing the AIC of the model:
+
+lmer_attitude:        803.4536
+
+lmer_gender           802.3546
+
+lmer_attitude_gender  787.4547
+
+comparing the BIC of the model:
+
+lmer_attitude         815.5479
+
+lmer_gender           814.4488
+
+lmer_attitude_gender  801.9678
+
+We can conclude that model lmer_attitude_gender is more significant than model lmer_attitude and lmer_gender. Therefore the model that used the both “gender” and ”attitude” as fixed effect to predict voice pitch is the the most accurate prediction.
+
+
+
+
+
+
+
