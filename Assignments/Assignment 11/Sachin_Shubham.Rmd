@@ -1,0 +1,48 @@
+---
+title: "COSC6323 - Exercise 9"
+author: "Sachin Shubham"
+date: "4/10/2021"
+output:
+  word_document: default
+  html_document: default
+---
+Task 1:
+
+Work with the project data. Build a regression model based on the article level data which is predicting the cross-disciplinary in CIP (XCIPp variable) Classification of Instructional Programs, using year of publication, log-transformed coauthors count, log-transformed Major MeSH count, regions count and total number of SAps (NSAp) as predictors. Get model summary, pseudo r-squared measures, odds ratio and comment about the results.
+ 
+Solution:
+
+```{r}
+library(tidyverse)  
+library(modelr)     
+library(broom)      
+library(ROCR)
+library(questionr)
+setwd("D:/Statistical Methods/Project")
+df_article<-read.csv("ArticleLevel-RegData-ALLSA_Xc_1_NData_655386_LONGXCIP2.csv")
+df_article<-as_tibble(df_article)
+
+
+model1 <- glm(XCIPp ~ Yp + log(Kp) + log(nMeSHMain) + NRegp + NSAp, data = df_article, family=binomial(link='logit'))
+summary(model1)
+pscl::pR2(model1)["McFadden"]
+output = odds.ratio(model1) # HEAVY COMPUTATIONAL!
+output = apply(output, 2, formatC, format="f", digits=4)
+output
+
+
+```
+Conclusion:
+
+The summary of the model shows that:
+
+1. All of the variables are highly significant in predicting cross-disciplinary in CIP with all p-values are quite less than 0.05. The number of co-authors and region the article was written appear to also have a close standard error.
+
+2. As we know that values of  pseudo r-squared [ρ2] between 0.2 to 0.4 represent an excellent fit.Our model  pseudo r-squared [ρ2] is 0.2282903, which represent our model is excellent fit. 
+
+
+3. The odds ratio shows that from the data given, the region from where the article research took place was 7.33 times more successful in predicting whether the article had cross-disciplinary co-authors. The log number of co-authors was also successful in predicting whether the article had cross-disciplinary co-authors with a success-to-failure ratio of 1.85. All variables in the odds ratio were shown to be extremely significant. 
+
+
+
+
