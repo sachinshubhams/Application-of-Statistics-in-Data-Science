@@ -1,10 +1,21 @@
 ---
-title: "Sachin_Shubham"
-author: "Sachin Shubham - 1524147"
+title: "Assignment 1"
+author: "Sachin Shubham"
 date: "1/29/2021"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
 ---
 
+As a new Data Scientist in the fuel production company you were assigned a
+task to prepare a slide demonstrating highway gas consumption depending on
+the type of the vehicle. At the meeting you have decided to use a combination
+of the boxplot together with the dot plot (as not everyone from the top management knows how to read box plots). You have decided to use mpg data set
+and your manager showed you the example of expected plot (Figure 1). Using
+ggplot generate this plot. Using Rmarkdown generate a report containing code,
+figure (plotted by ggplot) and your personal information (First name, Last name
+and Student id). You are new at this company but you have heard through the
+grapevine that your manager is super peaky about anything on the plot, including names of the labels, main title, legend and even italic ”n”.
 
 ```{r}
 library(ggplot2)

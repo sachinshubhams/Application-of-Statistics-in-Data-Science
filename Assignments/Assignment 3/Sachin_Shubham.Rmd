@@ -1,10 +1,24 @@
 ---
-title: "COSC6323 - Exercise 3"
+title: "Assignment 3"
 author: "Sachin Shubham"
 date: "2/13/2021"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
 ---
+Task 1
 
+Suppose a coin toss turns up 13 heads out of 20 trials. At .05 significance level,
+can one reject the null hypothesis that the coin toss is fair?
+
+Task 2
+
+An outbreak of Salmonella-related illness was attributed to ice cream produced
+at a certain factory. Scientists measured the level of Salmonella in 9 randomly
+sampled batches of ice cream. The levels (in MPN/g) are : 0.593, 0.142, 0.329,
+0.691, 0.231, 0.793, 0.519, 0.392, 0.418.
+Is there evidence that the mean level of Salmonella in the ice cream is greater
+than 0.3 MPN/g?
 ```{r}
 # Task 1
 # Suppose a coin toss turns up 13 heads out of 20 trials. At .05 significance

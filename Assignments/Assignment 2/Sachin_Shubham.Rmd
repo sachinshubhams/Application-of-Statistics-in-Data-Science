@@ -1,9 +1,26 @@
 ---
-title: "Birthwt"
-author: "Sachin Shubham - 1524147"
+title: "Assignment 2"
+author: "Sachin Shubham"
 date: "2/6/2021"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
 ---
+Your friend from the medical department asked for your help with the project.
+You have to compare an outcome between two groups.
+Specifically:
+
+1.compare infants birth weight between smoking and non-smoking mothers
+
+2.compare infants birth weight between agroup of mothers with a presence of
+uterine irritability and a group of mothers without it
+
+You need to run hypothesis tests to assess whether the trends you observe
+from the descriptive analysis are statistically significant. Use MASS::birthwt
+dataset. Prepare one small report using the R markdown. Include in the report
+your code, comments on the output of the tests and brief summary (Example:
+”Our study finds that birth weights are on average ??? in the non-smoking
+group compared to the smoking group (t-statistic ??, p=??, ??% CI [??, ??]g)”).
 
 ```{r}
 library(tidyverse)
