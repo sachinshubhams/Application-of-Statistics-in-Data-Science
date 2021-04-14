@@ -1,20 +1,27 @@
 ---
-title: "COSC6323 - Exercise 7"
+title: "Assignment 8"
 author: "Sachin Shubham"
 date: "3/27/2021"
 output: word_document
 ---
 1 Task
+
 We are running a small sales company and we want to estimate the marketing budget for the next year. Use marketing data set which contains the impact of the amount of money spent on three advertising medias (YouTube,
 Facebook and newspaper) on sales. Install datarium package using devtools ::
 install github(”kassmbara/datarium”) then load and inspect the marketing
 data. Build a model for estimating sales based on the advertising budget invested in youtube, facebook and newspaper. Use the following outline for your
 report:
+
 0. Build a multiple linear regression model.
+
 1. Create the necessary plots.
+
 2. Examine the F-statistic and the associated p-value, interpret it.
+
 3. Examine which predictor variables are significant.
+
 4. Obtain the regression equation.
+
 5. What are your recommendations for the budget planning based on the reviewed data?
 
 ```{r}
