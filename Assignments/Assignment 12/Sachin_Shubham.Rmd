@@ -1,0 +1,69 @@
+---
+title: "Assignment 12"
+author: "Sachin Shubham"
+date: "4/17/2021"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+1 Task
+
+We are leading a fast food franchise. Our goal is to test marketing 3 new menu
+items in both East and West Coasts of the US. Franchisee restaurants from each
+Coast are randomly chosen for participation in the study. In accordance with
+the factorial design, within the 12 restaurants from East Coast, 4 are randomly
+chosen to test market the first new menu item, another 4 for the second menu
+item, and the remaining 4 for the last menu item. The 12 restaurants from the
+West Coast are arranged likewise.
+Upload the data from the fastfood.csv file. Each row in the upper table
+represents the sales figures of 3 different East Coast restaurants. The lower half represents West Coast restaurants. At .05 level of significance, test whether the mean sales volume for the new menu items are all equal. Decide also whether the mean sales volume of the two coastal regions differs. Is there an interaction between the menu item and the coast location factor?
+
+Solution:
+
+```{r}
+setwd("D:/Statistical Methods/COSC6323_public_files-main/Lesson11_data")
+df = read.csv("fastfood.csv")
+#df into a single vector
+mat = c(t(as.matrix(df))) 
+
+#Matrix plot of Item1,Item2 and Item3
+plot(df, pch=16, col="blue", main="Matrix Scatter Plot for Item1, Item2 & Item3")
+
+#factor levels
+first_fact_level=c("Item1","Item2","Item3")
+second_fact_level=c("E","W")
+
+#nos of factors
+n1=length(first_fact_level)
+n2=length(second_fact_level)
+
+n=4
+
+#treatement level 1
+tl_one = gl(n1, 1, n * n1 * n2,factor(first_fact_level)) 
+
+#treatement level 2
+tl_two = gl(n2, n*n1, n*n1*n2, factor(second_fact_level)) 
+
+#model
+model = aov(mat ~ tl_one * tl_two) 
+summary(model)
+
+#model plot
+par(mfrow=c(2,2))
+plot(model)
+
+
+```
+
+Conclusion:
+
+Our study find that:
+
+1. The p-value of the items is 0.00149(>0.05) so, we reject the null hypothesis. Therefore, the mean sales volume for the new menu items are all equal. 
+
+2. The p-value of the two coastal regions is (>0.05) so, we reject the null hypothesis. Therefore, we accept the alternative hypothesis that the sales are significantly different between the two coastal regions i.e. east and west coast restaurants.
+
+3. The p-value of the interaction between items and coast is 0.01132 (< 0.05) so, we reject the null hypothesis and accept the alternative hypothesis. Therefore, the result shows that, there is interaction between the menu item and the coast location factor.
+
