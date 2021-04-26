@@ -1,0 +1,179 @@
+---
+title: "Assignment 14"
+author: "Sachin Shubham"
+date: "4/24/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Use file Exc data.txt as a data source.
+
+3 different schools want to compare their students mean typing speed between
+their classes. They have also recorded the year or grade of each student. They
+are not interested in the effect of Year per se, but they want to account for the
+effect statistically. For each of the following, answer the question, and show the output from the analyses you used to answer the question.
+
+1) What was the LS mean typing speed for each school’s class?
+
+2) Does School have a significant effect on typing speed?
+
+3) Does Year have a significant effect on typing speed?
+
+4) Are the residuals reasonably normal and homoscedastic?
+
+5) Which schools had classes with significantly different mean typing speed from
+which others?
+
+6) Does this result correspond to what you would have thought from looking at
+the plot of the LS means and standard errors?
+
+7) Is this design balanced or unbalanced?
+
+Solution:
+
+1)
+
+```{r}
+library(psych)
+library(car)
+library(multcompView)
+library(lsmeans)
+library(ggplot2)
+library(rcompanion)
+library(multcompView)
+library(FSA)
+
+setwd("D:/Statistical Methods/Assignments/Assignment 11")
+#data frame
+df <- read.table("Exc_data.txt",header=TRUE)
+headTail(df)
+str(df)
+summary(df)
+#Summarize Data Frame
+Summarize(Words.per.minute ~ School,data=df,digits=3)
+#boxplot
+boxplot(Words.per.minute  ~  School,data = df)
+#groupwiseMean
+Sum = groupwiseMean(Words.per.minute ~ School,
+                    data   = df,
+                    conf   = 0.95,
+                    digits = 3,
+                    traditional = FALSE,
+                    percentile  = TRUE)
+print(Sum)
+#ggplot
+ggplot(Sum,                
+       aes(x = School,
+           y = Mean)) +
+  geom_errorbar(aes(ymin = Percentile.lower,
+                    ymax = Percentile.upper),
+                width = 0.05,
+                size  = 0.5) +
+  geom_point(shape = 15,
+             size  = 4) +
+  theme_bw() +
+  theme(axis.title   = element_text(face  = "bold")) +
+  ylab("Mean Words Per Minute")+scale_x_continuous(breaks=c(1,2,3))
+#factor
+df$School = factor(df$School,levels=unique(df$School))
+#model
+lm.model = lm(Words.per.minute ~ School+Year,data = df)
+summary(lm.model)
+#Anova
+Anova(lm.model,type = "II")
+
+#ls mean
+ls_mean = lsmeans(lm.model,~ School)
+summary(ls_mean)
+pairs(ls_mean,adjust="tukey")
+```
+
+
+__The LS mean typing speed for each school are:__
+
+**School 1 : 55.1 words/min**
+
+**School 2 : 66.3 words/min**
+
+**School 3 : 60.7 words/min**
+
+
+
+2)
+
+__School 1 and 2 are significant with p-values 1.24e-06 and 0.000746 (< 0.05) respectively on typing speed but School 3 not significant on typing speed with p-value of 0.079515 (> 0.05)__
+
+3)
+
+__Year is not significant effect on typing speed as the p-value of Year is   0.680940 which is quite higher than 0.05.__
+
+4)
+
+```{r}
+#checking for homoscedastic
+lmtest::bptest(lm.model)
+#plot for normality
+x = residuals(lm.model)
+plotNormalHistogram(x)
+#checking for normality
+shapiro.test(x)
+#plot model
+par(mfrow=c(2, 2))
+plot(lm.model)
+
+```
+
+__With a p-value of 0.91, we fail to reject the null hypothesis and therefore infer that the residuals are homoscedastic. Also we have a much flatter line and an evenly distributed residuals in the Residuals vs Fitted plot(top-left plot)__
+
+__The residuals are reasonably normal and the different school variance data appears to be equal. Looking at the Shapiro test for the residuals, the p-value is 0.6312 and greater than 0.05 so we accept the null hypothesis that the data is normally distributed__
+
+5)
+
+```{r}
+
+CLD  =  multcomp::cld(ls_mean,
+              alpha   = 0.05, 
+              Letters = letters,     ### Use lower-case letters for .group
+              adjust  = "sidak")     ###  Tukey-adjusted comparisons
+CLD
+
+
+```
+
+__School 1 and 2 had classes with significantly different mean typing speed from each others__
+
+6)
+
+```{r}
+#plot for LS Mean
+ggplot(CLD,aes(x= School,y= lsmean,
+           label = .group))+
+  geom_point(shape  = 15,
+             size   = 4) +
+  
+  geom_errorbar(aes(ymin  =  lower.CL,
+                    ymax  =  upper.CL),
+                width =  0.2,
+                size  =  0.7) +
+  
+  theme_bw() +
+  theme(axis.title   = element_text(face = "bold"),
+        axis.text    = element_text(face = "bold"),
+        plot.caption = element_text(hjust = 0)) +
+  
+  ylab("Mean Words Per Minute")
+
+```
+
+__Median for School 2 is higher than School 1 and School 3.There is overlap between School 2 and School 3, also between School 1 and School 3__
+
+7)
+
+```{r}
+#Checking design is balanced or unbalanced
+VCA:::isBalanced(Words.per.minute ~ School+Year, df, na.rm = TRUE)
+
+```
+
+__Yes design is unbalanced.Additionally the number of data points in each category differs__
