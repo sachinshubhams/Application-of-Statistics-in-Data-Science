@@ -1,0 +1,55 @@
+---
+title: "Assignment 15"
+author: "Sachin Shubham"
+date: "5/1/2021"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+1 Task
+
+You are working with the results of the 2-way unreplicated block design experiment (Table 1). The data is balanced. The first column (count) represents
+the number of individuals captured. Year represents the year when the survey
+was conducted. The Month shows that for each year there were 5 survey events
+in each year. Each year is a “treatment” (or “group”) and the month variable
+represents a “block”. This is a common sort of experimental design; the blocks
+are set up to take care of any possible variation and to provide replication for
+the treatment. In this instance you wish to know if there is any significant difference due to the year.
+
+1. Apply Friedman test. Comment on the results.
+
+2. Apply post-hoc tests (pairwise.wilcox.test). Comment on the results.
+
+Solution:
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+
+count<-c(2,48,40,3,120,81,2,16,36,7,21,17,2,14,17)
+month<-c(1,1,1,2,2,2,3,3,3,4,4,4,5,5,5)
+year<-c(2004,2005,2006,2004,2005,2006,2004,2005,2006,2004,2005,2006,2004,2005,2006)
+df<-data.frame(count,month,year)
+df
+attach(df)
+friedman.test(count, groups = year, blocks = month)
+
+friedman.test(count ~ year | month, data= df)
+wb <- aggregate(df$count,
+                by = list(w = df$year,
+                          t = df$month),
+                FUN = mean)
+wb
+friedman.test(wb$x, wb$w, wb$t)
+friedman.test(x ~ w | t, data = wb)
+
+p<-pairwise.wilcox.test(df$count, g = df$year, exact=FALSE)
+print(p)
+
+```
+
+CONCLUSION: 
+
+The 2005 and 2006 years data do not appear to be significant but 2004 data appears to be weakly statistically significant to 2005 and 2006 with a p-value of 0.033. I would normally divide alpha threshold over the number of categories/channels in each pairing to set a stronger threshold that the Wilcoxon test must pass. In this case alpha = 0.05/3 categories = 0.0167. Overall, I would be hesitant to call this statistically significant even though it falls under the alpha=0.05 threshold using a Wilcoxon test.
