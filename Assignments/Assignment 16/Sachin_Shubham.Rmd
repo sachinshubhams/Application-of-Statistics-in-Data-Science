@@ -1,0 +1,114 @@
+---
+title: "Assignment 16"
+author: "Sachin Shubham"
+date: "5/2/2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+Task 1
+
+Two each of 40 samples of canned meat were stored at 2, 4.5, 21, and 38C for
+periods of 1,2,4,8, and 13 months, respectively. The two samples from each
+factor combination were randomly given to two taste panels who rated the
+samples on a continuous scale from 1 (excellent) to 8 (unacceptable). The data
+are given in Table 1; the two numbers in each combination are the ratings of
+panels 1 and 2, respectively. Analyze the data to ascertain the relationship
+of the quality of meat and temperature. Note that both factors have numeric
+levels.
+
+Solution:
+
+```{r}
+library(multcompView)
+library(lsmeans)
+library(ggplot2)
+
+sample<-c(2.38,2.19,2.74,2.50,2.75,2.74,3.28,2.83,3.81,3.05,
+          2.67,2.39,2.81,2.64,3.00,2.79,3.58,3.23,3.67,3.61,
+          2.93,2.72,2.97,2.88,3.05,3.21,3.68,3.25,4.04,4.23,
+          3.81,3.07,4.14,3.14,4.78,3.45,5.78,5.28,6.05,7.14)
+time<-c(1,1,2,2,4,4,8,8,13,13,
+        1,1,2,2,4,4,8,8,13,13,
+        1,1,2,2,4,4,8,8,13,13,
+        1,1,2,2,4,4,8,8,13,13)
+temprature<-c(2,2,2,2,2,2,2,2,2,2,
+              4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,
+              21,21,21,21,21,21,21,21,21,21,
+              38,38,38,38,38,38,38,38,38,38)
+
+time_fac<-as.factor(time)
+temprature_fac<-as.factor(temprature)
+df_task1<-data.frame(time_fac,temprature_fac,sample)
+
+head(df_task1,5)
+
+boxplot(sample ~ temprature_fac)
+
+model <- aov(sample ~ time_fac + temprature_fac,data = df_task1)
+summary(model)
+par(mfrow=c(2,2))
+plot(model)
+
+marginal = lsmeans(model, 
+                   ~ temprature_fac)
+pairs(marginal,
+      adjust="tukey")
+CLD = multcomp::cld(marginal,
+                    alpha   = 0.05,
+                    Letters = letters,  # Use lower-case letters for .group
+                    adjust  = "sidak")  # Sidak-adjusted p-values
+CLD
+
+
+#plot for LS Mean
+ggplot(CLD,aes(x= temprature_fac ,y= lsmean,
+               label = .group))+
+  geom_point(shape  = 15,
+             size   = 4) +
+  
+  geom_errorbar(aes(ymin  =  lower.CL,
+                    ymax  =  upper.CL),
+                width =  0.2,
+                size  =  0.7) +
+  
+  theme_bw() +
+  theme(axis.title   = element_text(face = "bold"),
+        axis.text    = element_text(face = "bold"),
+        plot.caption = element_text(hjust = 0)) +
+  ylab("Mean Quality of the meat")+
+  xlab("Temperature")
+
+
+```
+
+Conclusion:
+
+Our study finds that, the quality of the meat is significantly related to the temperature the canned meat was stored as p-value << 0.05 and F-value >> 1.
+
+Task 2
+
+An agriculture experiment was conducted to compare four varieties of sweet
+potatoes. The experiment was conducted in a completely randomized design
+with varieties as the treatment. The response variable was yield in tons per
+acre. The data are given in Table 2. Test for a difference in distributions of
+yields using the Kruskal-Wallis test. (Use α = 0.01.)
+
+Solution
+
+```{r}
+Values<-c(8.3,9.4,9.1,9.1,9.0,8.9,8.9,9.1,9.0,8.1,8.2,8.8,8.4,8.3,10.1,10.0,9.6,9.3,9.8,9.5,9.4,7.8,8.2,8.1,7.9,7.7,8.0,8.1)
+Variety<-c("Variety_A","Variety_A","Variety_A","Variety_A","Variety_A","Variety_A","Variety_A","Variety_B","Variety_B","Variety_B","Variety_B","Variety_B","Variety_B","Variety_B","Variety_C","Variety_C","Variety_C","Variety_C","Variety_C","Variety_C","Variety_C","Variety_D","Variety_D","Variety_D","Variety_D","Variety_D","Variety_D","Variety_D")
+
+df_task2<-data.frame(Values,Variety)
+
+head(df_task2,5)
+
+kruskal.test(Values ~ Variety, data = df_task2)
+
+```
+
+Conclusion:
+
+Our study finds that the Kruskal-Wallis p-value is << 0.01 so the difference in distributions is considered statistically significant.Therefore we reject the null hypothesis and accept the alternative hypothesis that the the distributions have no difference.
